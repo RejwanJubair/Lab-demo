@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Physics Laboratory: Experiments</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--paper:#f3f6f8;--grid:#d5e0e7;--ink:#15212d;--muted:#566574;--blue:#2447a8;--line:#c3cfd8;--wash:#e6edfa;
+--serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#10161d;--grid:#1b2631;--ink:#e6ebf0;--muted:#98a6b4;--blue:#8fb0ff;--line:#2c3947;--wash:#1d2a44}}
+:root[data-theme="dark"]{--paper:#10161d;--grid:#1b2631;--ink:#e6ebf0;--muted:#98a6b4;--blue:#8fb0ff;--line:#2c3947;--wash:#1d2a44}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
+.wrap{max-width:860px;margin:0 auto;padding:0 20px}
+.top{background-color:var(--paper);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px;border-bottom:2px solid var(--blue);padding:44px 0 28px}
+h1{font:600 clamp(2rem,7vw,3.3rem)/1.1 var(--serif);margin:0 0 12px}
+.sub{margin:0;color:var(--muted);max-width:52ch}
+input[type=search]{width:100%;margin-top:22px;padding:12px 14px;font:inherit;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:6px}
+.tabs{display:flex;gap:22px;overflow-x:auto;border-bottom:1px solid var(--line);margin-top:20px}
+.tabs button{background:none;border:0;border-bottom:2px solid transparent;margin-bottom:-1px;padding:10px 0;font:inherit;color:var(--muted);cursor:pointer;white-space:nowrap}
+.tabs button.on{color:var(--blue);border-bottom-color:var(--blue);font-weight:600}
+.count{margin:14px 0 0;color:var(--muted);font-size:.9rem}
+.row{display:block;padding:18px 0;border-bottom:1px solid var(--line);color:inherit;text-decoration:none}
+.row h3{font:600 1.3rem/1.3 var(--serif);margin:0 0 4px}
+.row:hover h3{color:var(--blue);text-decoration:underline}
+.row p{margin:0;color:var(--muted);max-width:66ch}
+.meta{font-size:.875rem;color:var(--muted);margin-top:6px}
+.empty{padding:28px 0;color:var(--muted)}
+.back{display:inline-block;margin:22px 0 4px;color:var(--blue)}
+.detail h2{font:600 clamp(1.7rem,5vw,2.4rem)/1.15 var(--serif);margin:6px 0 10px}
+.detail h4{font:600 1.15rem var(--serif);margin:28px 0 6px}
+.detail p,.detail li{font-family:var(--serif);font-size:1.0625rem;line-height:1.7;max-width:66ch}
+.detail p{margin:0 0 8px}
+.detail ul,.detail ol{margin:0;padding-left:1.3em}
+.lead{color:var(--muted)}
+.result{border-left:3px solid var(--blue);background:var(--wash);padding:12px 16px;border-radius:0 6px 6px 0}
+.foot{padding:36px 20px;color:var(--muted);font-size:.875rem}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+<h1 id="title"></h1>
+<p class="sub" id="tag"></p>
+<input id="q" type="search" placeholder="Search experiments" aria-label="Search experiments">
+</div></header>
+<main class="wrap" id="app"></main>
+<footer class="wrap foot" id="foot"></footer>
+<script>
+/* TO EDIT: change LAB, then add, remove or change entries in EXPERIMENTS. Each one needs a unique id. */
+const LAB={name:"Physics Laboratory",tagline:"The experiments performed in our lab, with aim, method and results.",footer:"Physics Laboratory, experiment records"};
+const EXPERIMENTS=[
+{id:"simple-pendulum",title:"Simple pendulum",category:"Mechanics",date:"2026-08-05",
+summary:"Finding the acceleration due to gravity from the time period of a swinging bob.",
+aim:"To determine the acceleration due to gravity (g) using a simple pendulum.",
+apparatus:["Metal bob and thread","Split cork and retort stand","Stopwatch","Meter scale and vernier calipers"],
+procedure:["Suspend the bob so the thread length is about 100 cm.","Measure the length from the point of suspension to the centre of the bob.","Displace the bob by less than 5° and release it.","Time 20 oscillations and calculate the period T.","Repeat for five different lengths and plot L against T²."],
+result:"The slope of the L–T² graph gives g = 4π² × slope. Sample result: g ≈ 9.78 m/s².",
+notes:"Keep the amplitude small so that sin θ ≈ θ."},
+{id:"newtons-rings",title:"Newton’s rings",category:"Optics",date:"2026-08-19",
+summary:"Measuring the wavelength of sodium light from circular interference fringes.",
+aim:"To determine the wavelength of monochromatic light using Newton’s rings.",
+apparatus:["Plano-convex lens and optical flat","Sodium vapour lamp","Travelling microscope","Glass plate inclined at 45°"],
+procedure:["Place the lens on the flat and set up the glass plate under the microscope.","Focus until the dark central spot and the rings are sharp.","Record the positions of the nth and (n+p)th rings on both sides.","Calculate the ring diameters D and repeat for several values of n."],
+result:"λ = (D²(n+p) − D²(n)) / (4pR), where R is the radius of curvature of the lens. Sample result: λ ≈ 589 nm.",
+notes:"Turn the microscope screw in one direction only to avoid backlash error."},
+{id:"hall-effect",title:"Hall effect",category:"Solid state physics",date:"2026-09-02",
+summary:"Measuring the Hall coefficient and carrier concentration of a semiconductor.",
+aim:"To measure the Hall voltage and find the Hall coefficient and carrier density of a semiconductor crystal.",
+apparatus:["Hall probe with semiconductor crystal","Electromagnet and power supply","Constant current source","Gaussmeter and digital voltmeter"],
+procedure:["Pass a fixed current through the crystal and place it between the magnet poles.","Measure the magnetic field with the gaussmeter.","Record the Hall voltage for both field directions and average the readings.","Repeat for several currents and field strengths."],
+result:"R(H) = V(H)·t / (I·B) and n = 1 / (e·R(H)). The sign of V(H) shows whether the carriers are electrons or holes.",
+notes:"Let the current settle before each reading so heating does not shift the voltage."},
+{id:"meter-bridge",title:"Meter bridge",category:"Electricity",date:"2026-09-16",
+summary:"Finding an unknown resistance and the resistivity of a wire by the null method.",
+aim:"To find the resistance and resistivity of a wire using a meter bridge.",
+apparatus:["Meter bridge","Resistance box and unknown wire","Galvanometer and jockey","Cell and plug key"],
+procedure:["Connect the unknown resistance and the resistance box in the two gaps of the bridge.","Move the jockey along the wire until the galvanometer shows zero deflection.","Note the balancing length l and calculate X = R(100 − l) / l.","Repeat for several values of R and take the mean."],
+result:"Resistivity ρ = X·πr² / L, where r is the wire radius and L its length.",
+notes:"Do not slide the jockey along the wire; tap it to avoid changing the wire’s cross-section."}
+];
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmt=d=>{try{return new Date(d+"T00:00").toLocaleDateString(undefined,{day:"numeric",month:"short",year:"numeric"})}catch(e){return d}};
+const cats=["All",...new Set(EXPERIMENTS.map(e=>e.category))];
+let q="",cat="All";
+$("#title").textContent=LAB.name;$("#tag").textContent=LAB.tagline;$("#foot").textContent=LAB.footer;
+const row=e=>`<a class="row" href="#/${esc(e.id)}"><h3>${esc(e.title)}</h3><p>${esc(e.summary)}</p><div class="meta">${esc(e.category)}, ${esc(fmt(e.date))}</div></a>`;
+function showList(){
+ $("#app").innerHTML=`<div class="tabs" id="chips"></div><p class="count" id="count"></p><div id="list"></div>`;
+ $("#chips").addEventListener("click",ev=>{const b=ev.target.closest("button");if(b){cat=b.dataset.c;update()}});
+ $("#q").hidden=false;update();
+}
+function update(){
+ $("#chips").innerHTML=cats.map(c=>`<button class="${c===cat?"on":""}" data-c="${esc(c)}">${esc(c)}</button>`).join("");
+ const s=q.trim().toLowerCase();
+ const items=EXPERIMENTS.filter(e=>(cat==="All"||e.category===cat)&&[e.title,e.summary,e.category,e.aim].join(" ").toLowerCase().includes(s));
+ $("#count").textContent=items.length+(items.length===1?" experiment":" experiments");
+ $("#list").innerHTML=items.length?items.map(row).join(""):`<p class="empty">No experiments match. Try a different word or choose All.</p>`;
+}
+function showDetail(e){
+ const li=a=>a.map(x=>`<li>${esc(x)}</li>`).join("");
+ $("#q").hidden=true;
+ $("#app").innerHTML=`<a class="back" href="#/">Back to all experiments</a><article class="detail"><div class="meta">${esc(e.category)}, ${esc(fmt(e.date))}</div><h2>${esc(e.title)}</h2><p class="lead">${esc(e.summary)}</p><h4>Aim</h4><p>${esc(e.aim)}</p><h4>Apparatus</h4><ul>${li(e.apparatus)}</ul><h4>Procedure</h4><ol>${li(e.procedure)}</ol><h4>Observations and result</h4><p class="result">${esc(e.result)}</p>${e.notes?`<h4>Notes</h4><p>${esc(e.notes)}</p>`:""}</article>`;
+ window.scrollTo(0,0);
+}
+function route(){
+ const id=decodeURIComponent(location.hash.replace(/^#\/?/,""));
+ const e=EXPERIMENTS.find(x=>x.id===id);
+ document.title=(e?e.title+": ":"")+LAB.name;
+ e?showDetail(e):showList();
+}
+$("#q").addEventListener("input",ev=>{q=ev.target.value;update()});
+addEventListener("hashchange",route);route();
+</script>
+</body>
+</html>
